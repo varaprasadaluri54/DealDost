@@ -27,6 +27,34 @@ class ProductService {
       }
     }
 
+    /**
+     * REAL-WORLD EXAMPLE: Using a 3rd Party API (e.g., DataYuge)
+     * To use this, you would uncomment the block below and provide your API Key.
+     */
+    /*
+    const DATA_YUGE_KEY = 'YOUR_ACTUAL_API_KEY_HERE';
+    try {
+      const response = await fetch(`https://api.datayuge.com/v1/compare/search?q=${query}&api_key=${DATA_YUGE_KEY}`);
+      const data = await response.json();
+
+      // Transform their specific format into DealDost format
+      return data.products.map(p => ({
+        id: p.product_id,
+        name: p.product_title,
+        image: p.product_image,
+        category: category,
+        isLive: true,
+        lastUpdated: new Date().toISOString(),
+        prices: [
+          { store: 'Amazon', price: p.amazon_price, url: p.amazon_link },
+          { store: 'Flipkart', price: p.flipkart_price, url: p.flipkart_link }
+        ]
+      }));
+    } catch (e) {
+      console.log("External API failed, using simulation...");
+    }
+    */
+
     // Simulation Fallback Logic
     const latency = Math.floor(Math.random() * 800) + 400;
     await new Promise(resolve => setTimeout(resolve, latency));

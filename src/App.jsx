@@ -4,7 +4,7 @@ import ProductCard from './components/ProductCard';
 import LoadingSpinner from './components/LoadingSpinner';
 import { products as initialProducts } from './data/products';
 import { productService } from './services/productService';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Database } from 'lucide-react';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -52,6 +52,12 @@ function App() {
               {isLoading && <LoadingSpinner size="small" />}
             </div>
             <p className="text-gray-600">Get the best deals from top online stores with live tracking</p>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">
+                <Database className="w-3 h-3" />
+                {import.meta.env.VITE_API_URL ? 'Live API Connected' : 'Simulated Data Mode'}
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
