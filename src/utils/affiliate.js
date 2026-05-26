@@ -25,7 +25,7 @@ export const getAffiliateLink = (url, store) => {
       urlObj.searchParams.set("affid", tag); // Generic affiliate param for demo
     }
     return urlObj.toString();
-  } catch (e) {
+  } catch {
     return url;
   }
 };
