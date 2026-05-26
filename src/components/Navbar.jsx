@@ -9,7 +9,7 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
           <div className="bg-purple-600 p-2 rounded-lg">
             <ShoppingCart className="text-white w-6 h-6" />
           </div>
-          <h1 className="text-xl font-bold text-gray-900 m-0">PriceCheck</h1>
+          <h1 className="text-xl font-bold text-gray-900 m-0">DealDost</h1>
         </div>
 
         <div className="relative w-full md:w-96">
@@ -26,7 +26,7 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
         </div>
 
         <div className="hidden md:block">
-          <span className="text-sm text-gray-500">Find the best deals across stores</span>
+          <span className="text-sm text-gray-500">Your shopping friend for the best deals</span>
         </div>
       </div>
     </nav>

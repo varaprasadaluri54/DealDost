@@ -102,7 +102,7 @@ function App() {
       <footer className="bg-white border-t border-gray-200 py-8 px-4 mt-auto">
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-gray-500 text-sm">
-            © 2024 PriceCheck. All rights reserved. Affiliate links may earn us a commission.
+            © 2024 DealDost. All rights reserved. Affiliate links may earn us a commission.
           </p>
           <p className="text-gray-400 text-xs mt-1">Live data is simulated for demonstration purposes.</p>
         </div>
