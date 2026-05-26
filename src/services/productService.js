@@ -10,6 +10,8 @@ class ProductService {
    * In a real implementation, this would call a backend API that scrapes or uses official APIs.
    */
   async searchProducts(query, category = 'All') {
+    console.log(`[ProductService] Searching for "${query}" in category "${category}"...`);
+
     // Simulate network latency (500ms - 1500ms)
     const latency = Math.floor(Math.random() * 1000) + 500;
     await new Promise(resolve => setTimeout(resolve, latency));
@@ -45,7 +47,7 @@ class ProductService {
       }));
     } catch (error) {
       console.error("Failed to fetch live prices:", error);
-      throw new Error("Could not retrieve live price data. Please try again later.");
+      throw new Error("Could not retrieve live price data. Please try again later.", { cause: error });
     }
   }
 }

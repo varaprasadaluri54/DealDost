@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -18,6 +18,9 @@ function App() {
   const fetchLiveProducts = useCallback(async (query, cat) => {
     setIsLoading(true);
     setError(null);
+    // Clear display during "fetching" for better visual feedback
+    if (query) setDisplayProducts([]);
+
     try {
       const results = await productService.searchProducts(query, cat);
       setDisplayProducts(results);
@@ -95,6 +98,9 @@ function App() {
             <AlertCircle className="w-12 h-12 text-gray-300 mb-4" />
             <h3 className="text-lg font-medium text-gray-900">No products found</h3>
             <p className="text-gray-500">Try adjusting your search or category filter</p>
+            <p className="mt-4 text-sm text-gray-400 bg-gray-100 px-4 py-2 rounded-full">
+              Note: Search is currently using simulated data. Try searching for "iPhone", "Nike", or "Bata".
+            </p>
           </div>
         )}
       </main>
