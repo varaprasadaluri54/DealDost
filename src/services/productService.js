@@ -12,16 +12,26 @@ class ProductService {
   async searchProducts(query, category = 'All') {
     console.log(`[ProductService] Searching for "${query}" in category "${category}"...`);
 
-    // Simulate network latency (500ms - 1500ms)
-    const latency = Math.floor(Math.random() * 1000) + 500;
+    // Check if an API URL is configured (e.g., in a .env file)
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+    if (API_BASE_URL) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}&cat=${category}`);
+        if (response.ok) {
+          return await response.json();
+        }
+        console.warn(`API responded with status: ${response.status}. Falling back to mock data.`);
+      } catch (error) {
+        console.warn("Live API connection failed. Falling back to mock data simulation:", error);
+      }
+    }
+
+    // Simulation Fallback Logic
+    const latency = Math.floor(Math.random() * 800) + 400;
     await new Promise(resolve => setTimeout(resolve, latency));
 
     try {
-      // Logic for "Live" fetching simulation
-      // In production, you would use: 
-      // const response = await fetch(`https://api.pricecheck.com/search?q=${query}&cat=${category}`);
-      // return await response.json();
-
       let filtered = mockProducts;
       
       if (query) {
