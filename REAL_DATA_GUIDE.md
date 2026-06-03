@@ -2,6 +2,21 @@
 
 To show live data from sites like Amazon, Flipkart, and Myntra in DealDost, follow this architecture.
 
+## 🚀 Quick Checklist: Required Keys
+To go live, you need to collect these three types of keys:
+
+1.  **Product Data API Key:** (Choose one)
+    *   **DataYuge:** Most popular for Indian stores.
+    *   **Rainforest:** Best for global Amazon data.
+    *   **RapidAPI:** Good for general e-commerce scrapers.
+2.  **Affiliate Tracking IDs:**
+    *   **Amazon Associates ID:** (e.g., `yoursite-21`)
+    *   **Flipkart Affiliate ID:** (e.g., `affid-789`)
+3.  **Backend URL:** (Internal)
+    *   `VITE_API_URL`: Points your React app to your proxy server.
+
+---
+
 ## 1. How the data is fetched
 You cannot call Amazon directly from React. You must use a **Middleman API** that scrapes the data for you.
 
