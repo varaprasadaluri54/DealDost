@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
 import LoadingSpinner from './components/LoadingSpinner';
 import { products as initialProducts } from './data/products';
 import { productService } from './services/productService';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Database } from 'lucide-react';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,6 +18,9 @@ function App() {
   const fetchLiveProducts = useCallback(async (query, cat) => {
     setIsLoading(true);
     setError(null);
+    // Clear display during "fetching" for better visual feedback
+    if (query) setDisplayProducts([]);
+
     try {
       const results = await productService.searchProducts(query, cat);
       setDisplayProducts(results);
@@ -49,6 +52,12 @@ function App() {
               {isLoading && <LoadingSpinner size="small" />}
             </div>
             <p className="text-gray-600">Get the best deals from top online stores with live tracking</p>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">
+                <Database className="w-3 h-3" />
+                {import.meta.env.VITE_API_URL ? 'Live API Connected' : 'Simulated Data Mode'}
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
@@ -95,6 +104,9 @@ function App() {
             <AlertCircle className="w-12 h-12 text-gray-300 mb-4" />
             <h3 className="text-lg font-medium text-gray-900">No products found</h3>
             <p className="text-gray-500">Try adjusting your search or category filter</p>
+            <p className="mt-4 text-sm text-gray-400 bg-gray-100 px-4 py-2 rounded-full">
+              Note: Search is currently using simulated data. Try searching for "iPhone", "Nike", or "Bata".
+            </p>
           </div>
         )}
       </main>

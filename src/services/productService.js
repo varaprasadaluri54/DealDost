@@ -10,16 +10,56 @@ class ProductService {
    * In a real implementation, this would call a backend API that scrapes or uses official APIs.
    */
   async searchProducts(query, category = 'All') {
-    // Simulate network latency (500ms - 1500ms)
-    const latency = Math.floor(Math.random() * 1000) + 500;
+    console.log(`[ProductService] Searching for "${query}" in category "${category}"...`);
+
+    // Check if an API URL is configured (e.g., in a .env file)
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+    if (API_BASE_URL) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}&cat=${category}`);
+        if (response.ok) {
+          return await response.json();
+        }
+        console.warn(`API responded with status: ${response.status}. Falling back to mock data.`);
+      } catch (error) {
+        console.warn("Live API connection failed. Falling back to mock data simulation:", error);
+      }
+    }
+
+    /**
+     * REAL-WORLD EXAMPLE: Using a 3rd Party API (e.g., DataYuge)
+     * To use this, you would uncomment the block below and provide your API Key.
+     */
+    /*
+    const DATA_YUGE_KEY = 'YOUR_ACTUAL_API_KEY_HERE';
+    try {
+      const response = await fetch(`https://api.datayuge.com/v1/compare/search?q=${query}&api_key=${DATA_YUGE_KEY}`);
+      const data = await response.json();
+
+      // Transform their specific format into DealDost format
+      return data.products.map(p => ({
+        id: p.product_id,
+        name: p.product_title,
+        image: p.product_image,
+        category: category,
+        isLive: true,
+        lastUpdated: new Date().toISOString(),
+        prices: [
+          { store: 'Amazon', price: p.amazon_price, url: p.amazon_link },
+          { store: 'Flipkart', price: p.flipkart_price, url: p.flipkart_link }
+        ]
+      }));
+    } catch (e) {
+      console.log("External API failed, using simulation...");
+    }
+    */
+
+    // Simulation Fallback Logic
+    const latency = Math.floor(Math.random() * 800) + 400;
     await new Promise(resolve => setTimeout(resolve, latency));
 
     try {
-      // Logic for "Live" fetching simulation
-      // In production, you would use: 
-      // const response = await fetch(`https://api.pricecheck.com/search?q=${query}&cat=${category}`);
-      // return await response.json();
-
       let filtered = mockProducts;
       
       if (query) {
@@ -45,7 +85,7 @@ class ProductService {
       }));
     } catch (error) {
       console.error("Failed to fetch live prices:", error);
-      throw new Error("Could not retrieve live price data. Please try again later.");
+      throw new Error("Could not retrieve live price data. Please try again later.", { cause: error });
     }
   }
 }

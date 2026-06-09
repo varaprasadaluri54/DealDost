@@ -1,4 +1,3 @@
-import React from 'react';
 import { Search, ShoppingCart } from 'lucide-react';
 
 const Navbar = ({ searchTerm, setSearchTerm }) => {

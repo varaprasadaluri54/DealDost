@@ -1,4 +1,3 @@
-import React from 'react';
 import { ExternalLink, Tag, Activity, Clock } from 'lucide-react';
 import { getAffiliateLink } from '../utils/affiliate';
 
