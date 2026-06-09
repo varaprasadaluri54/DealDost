@@ -19,12 +19,16 @@ class ProductService {
       try {
         const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}&cat=${category}`);
         if (response.ok) {
+          console.info(`[ProductService] Successfully fetched live data from ${API_BASE_URL}`);
           return await response.json();
         }
-        console.warn(`API responded with status: ${response.status}. Falling back to mock data.`);
+        console.warn(`[ProductService] API responded with status: ${response.status}. Falling back to mock data.`);
       } catch (error) {
-        console.warn("Live API connection failed. Falling back to mock data simulation:", error);
+        console.error("[ProductService] Live API connection failed. Check if your backend is running:", error);
+        console.warn("[ProductService] Falling back to mock data simulation.");
       }
+    } else {
+      console.info("[ProductService] No VITE_API_URL found. Using simulation mode. See REAL_DATA_GUIDE.md to connect a real API.");
     }
 
     /**

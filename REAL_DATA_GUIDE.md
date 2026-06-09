@@ -61,3 +61,22 @@ const mapApiToDealDost = (apiResult) => {
 
 ## 4. Current Status
 The code in `src/services/productService.js` now contains a placeholder method `fetchFromRealAPI`. Once you have your API key, simply paste it there!
+
+---
+
+## 🚀 Deployment & Production (Why you can't see API calls)
+
+If you have deployed your site (e.g., to Vercel, Netlify, or GitHub Pages) and don't see API calls, check these two things:
+
+### 1. Environment Variables in Dashboard
+Vite environment variables (like `VITE_API_URL`) must be added to your **Deployment Provider's Dashboard** (e.g., Vercel Settings -> Environment Variables).
+- **Important:** You must **re-deploy** your site after adding these variables because Vite "bakes" them into the code during the build process.
+
+### 2. HTTPS vs HTTP
+If your deployed site is `https://...`, your backend proxy MUST also be `https://...`. Browsers block "Mixed Content" (calling an `http` API from an `https` site).
+
+### 3. "No Backend" strategy for Deployment
+If you truly have no backend server, use **Vercel Functions** (Serverless).
+1. Create a folder named `/api` in your project root.
+2. Move your `proxy.js` logic into `/api/search.js`.
+3. Vercel will automatically turn this into a live API at `yourdomain.com/api/search`.
