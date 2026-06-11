@@ -57,10 +57,6 @@ app.get('/api/search', async (req, res) => {
 });
 
 /**
- * AI Search Endpoint (using Google Gemini)
- * This uses AI to "find" products and return them in our standard format.
- */
-/**
  * NO-KEY SCRAPER (Experimental)
  * This fetches a page directly and parses the HTML using Cheerio.
  * NOTE: Large sites like Amazon will block this without high-quality proxies/headers.
