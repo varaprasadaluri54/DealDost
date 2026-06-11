@@ -1,3 +1,54 @@
+# Getting Real E-commerce Data (Free Method)
+
+This project uses **Google Custom Search API (CSE)** to fetch real product data from Amazon, Flipkart, Meesho, Myntra, and Shopsy. This is a 100% free method that works directly from the frontend (no backend required).
+
+## Setup Instructions
+
+To enable live data, you need to get your own free API keys from Google.
+
+### 1. Get a Google API Key
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project (e.g., "DealDost").
+3. Go to **APIs & Services > Library**.
+4. Search for **"Custom Search API"** and click **Enable**.
+5. Go to **APIs & Services > Credentials**.
+6. Click **Create Credentials > API Key**.
+7. Copy this key.
+
+### 2. Get a Search Engine ID (CX)
+1. Go to the [Programmable Search Engine](https://programmablesearchengine.google.com/).
+2. Click **Add**.
+3. Name your search engine (e.g., "DealDost Shopping").
+4. Under "What to search?", select **"Search specific sites"** and add these:
+   - `amazon.in`
+   - `flipkart.com`
+   - `meesho.com`
+   - `myntra.com`
+   - `shopsy.in`
+5. Click **Create**.
+6. Go to **Customize > Basic** and find the **Search engine ID**.
+7. Copy this ID.
+
+### 3. Update your Environment Variables
+1. Create a file named `.env` in the root directory of this project.
+2. Add your keys like this:
+
+```env
+VITE_GOOGLE_API_KEY=your_copied_api_key
+VITE_GOOGLE_CSE_ID=your_copied_search_engine_id
+```
+
+3. Restart your development server (`npm run dev`).
+
+## How it works
+- **No Backend**: The app calls the Google API directly from your browser.
+- **Bypasses CORS**: Google's API is designed for frontend use, so you won't face CORS issues that happen when scraping Amazon directly.
+- **100 Free Searches/Day**: Google provides 100 free searches per day. This fits your requirement of 50-100 products.
+- **Fallback**: If you don't provide API keys, or if you exceed the limit, the app automatically falls back to the high-quality simulated data in `src/data/products.js`.
+
+## Limitations
+- **Data Freshness**: Google's index might be a few hours or days old, so prices might slightly differ from the live site.
+- **Search Results**: It returns the most relevant pages. The app tries to extract price and image information from the metadata (Schema.org) of those pages.
 # Guide: Getting Real Product Data from Shopping Sites
 
 To show live data from sites like Amazon, Flipkart, and Myntra in DealDost, follow this architecture.
@@ -9,7 +60,6 @@ To go live, you need to collect these three types of keys:
     *   **DataYuge:** Most popular for Indian stores.
     *   **Rainforest:** Best for global Amazon data.
     *   **RapidAPI:** Good for general e-commerce scrapers.
-    *   **Google Gemini (AI):** Uses AI to research and find products.
 2.  **Affiliate Tracking IDs:**
     *   **Amazon Associates ID:** (e.g., `yoursite-21`)
     *   **Flipkart Affiliate ID:** (e.g., `affid-789`)
@@ -62,53 +112,3 @@ const mapApiToDealDost = (apiResult) => {
 
 ## 4. Current Status
 The code in `src/services/productService.js` now contains a placeholder method `fetchFromRealAPI`. Once you have your API key, simply paste it there!
-
----
-
-## 🚀 Deployment & Production (Why you can't see API calls)
-
-If you have deployed your site (e.g., to Vercel, Netlify, or GitHub Pages) and don't see API calls, check these two things:
-
-### 1. Environment Variables in Dashboard
-Vite environment variables (like `VITE_API_URL`) must be added to your **Deployment Provider's Dashboard** (e.g., Vercel Settings -> Environment Variables).
-- **Important:** You must **re-deploy** your site after adding these variables because Vite "bakes" them into the code during the build process.
-
-### 2. HTTPS vs HTTP
-If your deployed site is `https://...`, your backend proxy MUST also be `https://...`. Browsers block "Mixed Content" (calling an `http` API from an `https` site).
-
-### 3. "No Backend" strategy for Deployment
-If you truly have no backend server, use **Vercel Functions** (Serverless).
-1. Create a folder named `/api` in your project root.
-2. Move your `proxy.js` logic into `/api/search.js`.
-3. Vercel will automatically turn this into a live API at `yourdomain.com/api/search`.
-
----
-
-## 🤖 Using AI for Product Discovery
-
-You can now use AI (Gemini) to find products.
-
-1. **Setup:** Add `GEMINI_API_KEY` to your backend `.env`.
-2. **Usage:** In the search bar, type `ai:` followed by your product.
-   *Example:* `ai: Best running shoes under 5000`
-3. **How it works:** The backend sends the prompt to Gemini, which researches real products and returns them in the DealDost format.
-
----
-
-## 🛠️ Method 3: Scraping Without Keys (The "Free" Way)
-
-If you don't want to use any API keys, your backend must act like a browser and "read" the HTML of shopping sites directly.
-
-### 1. How it works
-We use a library called **Cheerio** in the backend.
-1. Your server fetches the URL: `https://www.amazon.in/product-page`
-2. Cheerio "picks" the price from the HTML using CSS selectors (like `.a-price-whole`).
-3. Your app displays this price.
-
-### 2. The Challenges
-- **Anti-Bot Blocks:** Amazon will eventually block your server's IP address if you scrape too much.
-- **Maintenance:** If Amazon changes their website code, your "picker" will break, and you will have to update the selectors in `server/proxy.js`.
-- **Latency:** Scraping is often slower than using a dedicated API.
-
-### 3. Implementation
-The `/api/scrape` endpoint in `server/proxy.js` is already set up with a basic example. You can extend this by adding more selectors for Flipkart, Myntra, etc.
