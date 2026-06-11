@@ -52,5 +52,26 @@ export const products = [
       { store: "Shopsy", price: 249, url: "https://www.shopsy.in/men-printed-regular-fit-t-shirt/p/itm123" },
       { store: "Flipkart", price: 349, url: "https://www.flipkart.com/men-printed-regular-fit-t-shirt/p/itm456" }
     ]
+  },
+  {
+    id: 6,
+    name: "Bata Men's Oxford Formal Shoes",
+    image: "https://www.bata.com/dw/image/v2/BCLG_PRD/on/demandware.static/-/Sites-bata-in-master/default/dw8374826b/images/large/8516139_1.jpg",
+    category: "Fashion",
+    prices: [
+      { store: "Bata", price: 1999, url: "https://www.bata.in/men-shoes/formal-shoes/oxford" },
+      { store: "Amazon", price: 1899, url: "https://www.amazon.in/Bata-Mens-Oxford-Formal-Shoes/dp/B07P8J3QZ4" },
+      { store: "Flipkart", price: 1950, url: "https://www.flipkart.com/bata-men-s-oxford-formal-shoes/p/itm123456" }
+    ]
+  },
+  {
+    id: 7,
+    name: "Bata Women's Comfort Sandals",
+    image: "https://www.bata.com/dw/image/v2/BCLG_PRD/on/demandware.static/-/Sites-bata-in-master/default/dw1a2b3c4d/images/large/5616139_1.jpg",
+    category: "Fashion",
+    prices: [
+      { store: "Bata", price: 999, url: "https://www.bata.in/women-shoes/sandals/comfort" },
+      { store: "Myntra", price: 899, url: "https://www.myntra.com/sandals/bata/bata-women-comfort-sandals/123456/buy" }
+    ]
   }
 ];
