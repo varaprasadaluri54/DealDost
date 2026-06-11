@@ -11,6 +11,7 @@ function App() {
   const [category, setCategory] = useState('All');
   const [displayProducts, setDisplayProducts] = useState(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLive, setIsLive] = useState(false);
   const [error, setError] = useState(null);
 
   const categories = ['All', ...new Set(initialProducts.map(p => p.category))];
@@ -24,6 +25,7 @@ function App() {
     try {
       const results = await productService.searchProducts(query, cat);
       setDisplayProducts(results);
+      setIsLive(results.length > 0 && results[0].isLive);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -47,9 +49,18 @@ function App() {
       <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <h2 className="text-2xl font-bold text-gray-900">Compare Prices</h2>
               {isLoading && <LoadingSpinner size="small" />}
+              {!isLoading && (
+                <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded border ${
+                  isLive
+                    ? 'bg-green-50 text-green-700 border-green-200'
+                    : 'bg-amber-50 text-amber-700 border-amber-200'
+                }`}>
+                  {isLive ? 'Live Mode' : 'Simulated Data'}
+                </span>
+              )}
             </div>
             <p className="text-gray-600">Get the best deals from top online stores with live tracking</p>
             <div className="mt-2 flex items-center gap-2">
