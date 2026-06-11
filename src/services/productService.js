@@ -147,6 +147,15 @@ class ProductService {
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(query.toLowerCase())
       );
+        // Simulate slight price fluctuations for "live" feel
+        prices: p.prices.map(pr => ({
+          ...pr,
+          price: Math.round(pr.price * (1 + (Math.random() * 0.02 - 0.01))) // +/- 1% variation
+        }))
+      }));
+    } catch (error) {
+      console.error("Failed to fetch live prices:", error);
+      throw new Error("Could not retrieve live price data. Please try again later.", { cause: error });
     }
 
     if (category !== 'All') {
