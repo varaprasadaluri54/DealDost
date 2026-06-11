@@ -7,6 +7,7 @@ import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
+import * as cheerio from 'cheerio';
 
 dotenv.config();
 
@@ -59,6 +60,53 @@ app.get('/api/search', async (req, res) => {
  * AI Search Endpoint (using Google Gemini)
  * This uses AI to "find" products and return them in our standard format.
  */
+/**
+ * NO-KEY SCRAPER (Experimental)
+ * This fetches a page directly and parses the HTML using Cheerio.
+ * NOTE: Large sites like Amazon will block this without high-quality proxies/headers.
+ */
+app.get('/api/scrape', async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) return res.status(400).json({ error: 'URL is required' });
+
+  // SECURITY: Whitelist allowed shopping domains to prevent SSRF
+  const allowedDomains = ['amazon.in', 'flipkart.com', 'meesho.com', 'myntra.com', 'shopsy.in', 'bata.in'];
+  try {
+    const urlObj = new URL(url);
+    if (!allowedDomains.some(domain => urlObj.hostname.endsWith(domain))) {
+      return res.status(403).json({ error: 'Domain not allowed for scraping.' });
+    }
+
+    console.log(`[Scraper] Attempting to read: ${url}`);
+
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // This is an example of how you "pick" data from a website
+    // Each site has different CSS classes, so this logic must be custom for each!
+    const product = {
+      name: $('h1').first().text().trim() || 'Scraped Product',
+      price: $('.a-price-whole').first().text().trim() || 'Unknown',
+      image: $('img').first().attr('src'),
+      url: url,
+      isLive: true,
+      lastUpdated: new Date().toISOString()
+    };
+
+    res.json(product);
+  } catch (error) {
+    console.error('Scraping error:', error);
+    res.status(500).json({ error: 'Failed to scrape the page' });
+  }
+});
+
 app.get('/api/ai-search', async (req, res) => {
   const { q } = req.query;
   const GEMINI_KEY = process.env.GEMINI_API_KEY;

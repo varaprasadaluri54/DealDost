@@ -92,3 +92,23 @@ You can now use AI (Gemini) to find products.
 2. **Usage:** In the search bar, type `ai:` followed by your product.
    *Example:* `ai: Best running shoes under 5000`
 3. **How it works:** The backend sends the prompt to Gemini, which researches real products and returns them in the DealDost format.
+
+---
+
+## 🛠️ Method 3: Scraping Without Keys (The "Free" Way)
+
+If you don't want to use any API keys, your backend must act like a browser and "read" the HTML of shopping sites directly.
+
+### 1. How it works
+We use a library called **Cheerio** in the backend.
+1. Your server fetches the URL: `https://www.amazon.in/product-page`
+2. Cheerio "picks" the price from the HTML using CSS selectors (like `.a-price-whole`).
+3. Your app displays this price.
+
+### 2. The Challenges
+- **Anti-Bot Blocks:** Amazon will eventually block your server's IP address if you scrape too much.
+- **Maintenance:** If Amazon changes their website code, your "picker" will break, and you will have to update the selectors in `server/proxy.js`.
+- **Latency:** Scraping is often slower than using a dedicated API.
+
+### 3. Implementation
+The `/api/scrape` endpoint in `server/proxy.js` is already set up with a basic example. You can extend this by adding more selectors for Flipkart, Myntra, etc.
