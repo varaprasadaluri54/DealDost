@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
 import LoadingSpinner from './components/LoadingSpinner';
 import { products as initialProducts } from './data/products';
 import { productService } from './services/productService';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Database } from 'lucide-react';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('All');
   const [displayProducts, setDisplayProducts] = useState(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLive, setIsLive] = useState(false);
   const [error, setError] = useState(null);
 
   const categories = ['All', ...new Set(initialProducts.map(p => p.category))];
@@ -18,9 +19,13 @@ function App() {
   const fetchLiveProducts = useCallback(async (query, cat) => {
     setIsLoading(true);
     setError(null);
+    // Clear display during "fetching" for better visual feedback
+    if (query) setDisplayProducts([]);
+
     try {
       const results = await productService.searchProducts(query, cat);
       setDisplayProducts(results);
+      setIsLive(results.length > 0 && results[0].isLive);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -44,11 +49,26 @@ function App() {
       <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <h2 className="text-2xl font-bold text-gray-900">Compare Prices</h2>
               {isLoading && <LoadingSpinner size="small" />}
+              {!isLoading && (
+                <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded border ${
+                  isLive
+                    ? 'bg-green-50 text-green-700 border-green-200'
+                    : 'bg-amber-50 text-amber-700 border-amber-200'
+                }`}>
+                  {isLive ? 'Live Mode' : 'Simulated Data'}
+                </span>
+              )}
             </div>
             <p className="text-gray-600">Get the best deals from top online stores with live tracking</p>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">
+                <Database className="w-3 h-3" />
+                {import.meta.env.VITE_API_URL ? 'Live API Connected' : 'Simulated Data Mode'}
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
@@ -95,6 +115,9 @@ function App() {
             <AlertCircle className="w-12 h-12 text-gray-300 mb-4" />
             <h3 className="text-lg font-medium text-gray-900">No products found</h3>
             <p className="text-gray-500">Try adjusting your search or category filter</p>
+            <p className="mt-4 text-sm text-gray-400 bg-gray-100 px-4 py-2 rounded-full">
+              Note: Search is currently using simulated data. Try searching for "iPhone", "Nike", or "Bata".
+            </p>
           </div>
         )}
       </main>

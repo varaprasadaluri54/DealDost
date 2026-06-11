@@ -52,5 +52,46 @@ export const products = [
       { store: "Shopsy", price: 249, url: "https://www.shopsy.in/men-printed-regular-fit-t-shirt/p/itm123" },
       { store: "Flipkart", price: 349, url: "https://www.flipkart.com/men-printed-regular-fit-t-shirt/p/itm456" }
     ]
+  },
+  {
+    id: 6,
+    name: "Bata Men's Oxford Formal Shoes",
+    image: "https://www.bata.com/dw/image/v2/BCLG_PRD/on/demandware.static/-/Sites-bata-in-master/default/dw8374826b/images/large/8516139_1.jpg",
+    category: "Fashion",
+    prices: [
+      { store: "Bata", price: 1999, url: "https://www.bata.in/men-shoes/formal-shoes/oxford" },
+      { store: "Amazon", price: 1899, url: "https://www.amazon.in/Bata-Mens-Oxford-Formal-Shoes/dp/B07P8J3QZ4" },
+      { store: "Flipkart", price: 1950, url: "https://www.flipkart.com/bata-men-s-oxford-formal-shoes/p/itm123456" }
+    ]
+  },
+  {
+    id: 7,
+    name: "Bata Women's Comfort Sandals",
+    image: "https://www.bata.com/dw/image/v2/BCLG_PRD/on/demandware.static/-/Sites-bata-in-master/default/dw1a2b3c4d/images/large/5616139_1.jpg",
+    category: "Fashion",
+    prices: [
+      { store: "Bata", price: 999, url: "https://www.bata.in/women-shoes/sandals/comfort" },
+      { store: "Myntra", price: 899, url: "https://www.myntra.com/sandals/bata/bata-women-comfort-sandals/123456/buy" }
+    ]
+  },
+  {
+    id: 8,
+    name: "HP Laptop 15s - Ryzen 5 (Computer)",
+    image: "https://m.media-amazon.com/images/I/71-fS9i-ZXL._SX679_.jpg",
+    category: "Electronics",
+    prices: [
+      { store: "Amazon", price: 41990, url: "https://www.amazon.in/HP-Laptop-Micro-Edge-Display-15s-eq2144au/dp/B09R8BZC6L" },
+      { store: "Flipkart", price: 42500, url: "https://www.flipkart.com/hp-ryzen-5-hexa-core-5500u-8-gb-512-gb-ssd-windows-11-home-15s-eq2144au-laptop/p/itm94a1122a6136d" }
+    ]
+  },
+  {
+    id: 9,
+    name: "Gaming PC Desktop - Intel i7 + RTX 4060",
+    image: "https://m.media-amazon.com/images/I/81IAn-v26FL._SX679_.jpg",
+    category: "Electronics",
+    prices: [
+      { store: "Amazon", price: 85000, url: "https://www.amazon.in/ASUS-ROG-Strix-G10DK-Desktop/dp/B09X9S2PZJ" },
+      { store: "CustomBuild", price: 82000, url: "https://www.custompc.in/build" }
+    ]
   }
 ];
