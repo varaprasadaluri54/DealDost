@@ -9,6 +9,7 @@ To go live, you need to collect these three types of keys:
     *   **DataYuge:** Most popular for Indian stores.
     *   **Rainforest:** Best for global Amazon data.
     *   **RapidAPI:** Good for general e-commerce scrapers.
+    *   **Google Gemini (AI):** Uses AI to research and find products.
 2.  **Affiliate Tracking IDs:**
     *   **Amazon Associates ID:** (e.g., `yoursite-21`)
     *   **Flipkart Affiliate ID:** (e.g., `affid-789`)
@@ -80,3 +81,14 @@ If you truly have no backend server, use **Vercel Functions** (Serverless).
 1. Create a folder named `/api` in your project root.
 2. Move your `proxy.js` logic into `/api/search.js`.
 3. Vercel will automatically turn this into a live API at `yourdomain.com/api/search`.
+
+---
+
+## 🤖 Using AI for Product Discovery
+
+You can now use AI (Gemini) to find products.
+
+1. **Setup:** Add `GEMINI_API_KEY` to your backend `.env`.
+2. **Usage:** In the search bar, type `ai:` followed by your product.
+   *Example:* `ai: Best running shoes under 5000`
+3. **How it works:** The backend sends the prompt to Gemini, which researches real products and returns them in the DealDost format.

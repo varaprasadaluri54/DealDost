@@ -17,9 +17,13 @@ class ProductService {
 
     if (API_BASE_URL) {
       try {
-        const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}&cat=${category}`);
+        // Try AI Search first if requested or configured
+        const endpoint = query.startsWith('ai:') ? 'ai-search' : 'search';
+        const cleanQuery = query.replace(/^ai:/, '');
+
+        const response = await fetch(`${API_BASE_URL}/${endpoint}?q=${encodeURIComponent(cleanQuery)}&cat=${category}`);
         if (response.ok) {
-          console.info(`[ProductService] Successfully fetched live data from ${API_BASE_URL}`);
+          console.info(`[ProductService] Successfully fetched data from ${API_BASE_URL}/${endpoint}`);
           return await response.json();
         }
         console.warn(`[ProductService] API responded with status: ${response.status}. Falling back to mock data.`);

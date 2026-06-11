@@ -55,6 +55,50 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+/**
+ * AI Search Endpoint (using Google Gemini)
+ * This uses AI to "find" products and return them in our standard format.
+ */
+app.get('/api/ai-search', async (req, res) => {
+  const { q } = req.query;
+  const GEMINI_KEY = process.env.GEMINI_API_KEY;
+
+  if (!GEMINI_KEY) {
+    return res.status(500).json({ error: 'GEMINI_API_KEY is not configured on the server.' });
+  }
+
+  try {
+    console.log(`[AI Proxy] Researching products for: ${q}`);
+
+    const prompt = `You are a shopping assistant. Find 3 real products matching "${q}" available in India (Amazon.in, Flipkart).
+    Return ONLY a JSON array with this structure:
+    [{ "id": number, "name": "string", "image": "string", "category": "string", "prices": [{ "store": "string", "price": number, "url": "string" }] }]`;
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
+
+    const data = await response.json();
+    // Simple extraction logic for Gemini's text response
+    const textResponse = data.candidates[0].content.parts[0].text;
+    const jsonMatch = textResponse.match(/\[.*\]/s);
+
+    if (jsonMatch) {
+      const products = JSON.parse(jsonMatch[0]);
+      res.json(products.map(p => ({ ...p, isLive: true, lastUpdated: new Date().toISOString() })));
+    } else {
+      throw new Error("AI failed to return valid JSON");
+    }
+  } catch (error) {
+    console.error('AI Search error:', error);
+    res.status(500).json({ error: 'AI research failed. Try again later.' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 DealDost Proxy running at http://localhost:${PORT}`);
 });
