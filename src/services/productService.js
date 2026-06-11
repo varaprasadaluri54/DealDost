@@ -22,8 +22,8 @@ class ProductService {
       return this.searchWithAI(query.replace(/^ai:/, ''), category);
     }
 
-    // 2. Handle Real-time API via Backend Proxy (if configured)
-    const API_BASE_URL = import.meta.env.VITE_API_URL;
+    // 2. Handle Real-time API via Backend Proxy (or Netlify Functions)
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
     if (API_BASE_URL) {
       try {
         const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}&cat=${category}`);
@@ -59,7 +59,7 @@ class ProductService {
    * Dedicated AI Search method
    */
   async searchWithAI(query, category) {
-    const API_BASE_URL = import.meta.env.VITE_API_URL;
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
     if (!API_BASE_URL) {
       console.warn("VITE_API_URL not set. AI Search requires a backend proxy.");
       return this.getMockResults(query, category);

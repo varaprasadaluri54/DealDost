@@ -73,5 +73,25 @@ export const products = [
       { store: "Bata", price: 999, url: "https://www.bata.in/women-shoes/sandals/comfort" },
       { store: "Myntra", price: 899, url: "https://www.myntra.com/sandals/bata/bata-women-comfort-sandals/123456/buy" }
     ]
+  },
+  {
+    id: 8,
+    name: "HP Laptop 15s - Ryzen 5 (Computer)",
+    image: "https://m.media-amazon.com/images/I/71-fS9i-ZXL._SX679_.jpg",
+    category: "Electronics",
+    prices: [
+      { store: "Amazon", price: 41990, url: "https://www.amazon.in/HP-Laptop-Micro-Edge-Display-15s-eq2144au/dp/B09R8BZC6L" },
+      { store: "Flipkart", price: 42500, url: "https://www.flipkart.com/hp-ryzen-5-hexa-core-5500u-8-gb-512-gb-ssd-windows-11-home-15s-eq2144au-laptop/p/itm94a1122a6136d" }
+    ]
+  },
+  {
+    id: 9,
+    name: "Gaming PC Desktop - Intel i7 + RTX 4060",
+    image: "https://m.media-amazon.com/images/I/81IAn-v26FL._SX679_.jpg",
+    category: "Electronics",
+    prices: [
+      { store: "Amazon", price: 85000, url: "https://www.amazon.in/ASUS-ROG-Strix-G10DK-Desktop/dp/B09X9S2PZJ" },
+      { store: "CustomBuild", price: 82000, url: "https://www.custompc.in/build" }
+    ]
   }
 ];
