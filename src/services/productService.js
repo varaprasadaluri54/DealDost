@@ -2,7 +2,7 @@ import { products as mockProducts } from '../data/products';
 
 /**
  * Service to handle product data fetching from APIs.
- * Supports Google Custom Search API for real-time product search across Indian e-commerce sites.
+ * Supports Google Custom Search API, Gemini AI Search, and fallback simulation.
  */
 class ProductService {
   constructor() {
@@ -13,79 +13,64 @@ class ProductService {
 
   /**
    * Search for products across multiple stores.
-   * If API keys are provided, it uses Google CSE to find real products.
-   * Otherwise, it falls back to mock data.
    */
   async searchProducts(query, category = 'All') {
-    if (!this.isLiveEnabled || !query) {
-      return this.getMockResults(query, category);
-    }
     console.log(`[ProductService] Searching for "${query}" in category "${category}"...`);
 
-    // Check if an API URL is configured (e.g., in a .env file)
-    const API_BASE_URL = import.meta.env.VITE_API_URL;
+    // 1. Handle AI Search (prefixed with ai:)
+    if (query.startsWith('ai:')) {
+      return this.searchWithAI(query.replace(/^ai:/, ''), category);
+    }
 
+    // 2. Handle Real-time API via Backend Proxy (if configured)
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
     if (API_BASE_URL) {
       try {
         const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}&cat=${category}`);
         if (response.ok) {
+          console.info(`[ProductService] Successfully fetched data from ${API_BASE_URL}`);
           return await response.json();
         }
-        console.warn(`API responded with status: ${response.status}. Falling back to mock data.`);
       } catch (error) {
-        console.warn("Live API connection failed. Falling back to mock data simulation:", error);
+        console.warn("[ProductService] Proxy API connection failed:", error);
       }
     }
 
-    /**
-     * REAL-WORLD EXAMPLE: Using a 3rd Party API (e.g., DataYuge)
-     * To use this, you would uncomment the block below and provide your API Key.
-     */
-    /*
-    const DATA_YUGE_KEY = 'YOUR_ACTUAL_API_KEY_HERE';
-    try {
-      // Search across specific domains for better relevance
-      const sites = 'site:amazon.in OR site:flipkart.com OR site:meesho.com OR site:myntra.com OR site:shopsy.in';
-      const url = `https://www.googleapis.com/customsearch/v1?key=${this.apiKey}&cx=${this.cx}&q=${encodeURIComponent(query + ' ' + sites)}`;
-      const response = await fetch(`https://api.datayuge.com/v1/compare/search?q=${query}&api_key=${DATA_YUGE_KEY}`);
-      const data = await response.json();
-
-      // Transform their specific format into DealDost format
-      return data.products.map(p => ({
-        id: p.product_id,
-        name: p.product_title,
-        image: p.product_image,
-        category: category,
-        isLive: true,
-        lastUpdated: new Date().toISOString(),
-        prices: [
-          { store: 'Amazon', price: p.amazon_price, url: p.amazon_link },
-          { store: 'Flipkart', price: p.flipkart_price, url: p.flipkart_link }
-        ]
-      }));
-    } catch (e) {
-      console.log("External API failed, using simulation...");
-    }
-    */
-
-    // Simulation Fallback Logic
-    const latency = Math.floor(Math.random() * 800) + 400;
-    await new Promise(resolve => setTimeout(resolve, latency));
-
-    try {
-      let filtered = mockProducts;
-      
-      const response = await fetch(url);
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to fetch live data');
+    // 3. Handle Google Custom Search (if keys provided)
+    if (this.isLiveEnabled && query) {
+      try {
+        const sites = 'site:amazon.in OR site:flipkart.com OR site:meesho.com OR site:myntra.com OR site:shopsy.in';
+        const url = `https://www.googleapis.com/customsearch/v1?key=${this.apiKey}&cx=${this.cx}&q=${encodeURIComponent(query + ' ' + sites)}`;
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          return this.transformGoogleResults(data.items || []);
+        }
+      } catch (error) {
+        console.warn("[ProductService] Google CSE failed:", error);
       }
+    }
 
-      const data = await response.json();
-      return this.transformGoogleResults(data.items || [], query);
+    // 4. Fallback to Mock Data
+    return this.getMockResults(query, category);
+  }
+
+  /**
+   * Dedicated AI Search method
+   */
+  async searchWithAI(query, category) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
+    if (!API_BASE_URL) {
+      console.warn("VITE_API_URL not set. AI Search requires a backend proxy.");
+      return this.getMockResults(query, category);
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/ai-search?q=${encodeURIComponent(query)}&cat=${category}`);
+      if (response.ok) return await response.json();
+      throw new Error("AI Search API failed");
     } catch (error) {
-      console.warn("Live fetch failed, falling back to mock data:", error.message);
-      // Fallback to mock data on API error so the user still sees something
+      console.error("[ProductService] AI Search error:", error);
       return this.getMockResults(query, category);
     }
   }
@@ -94,21 +79,17 @@ class ProductService {
    * Transforms Google CSE results into our application's product format
    */
   transformGoogleResults(items) {
-    // Group results by "product name" or just return them as individual items
-    // Since CSE returns pages, we try to extract product info from pagemaps
     return items.map((item, index) => {
       const pagemap = item.pagemap || {};
       const product = pagemap.product?.[0] || {};
       const offer = pagemap.offer?.[0] || pagemap.offers?.[0] || {};
       const metatags = pagemap.metatags?.[0] || {};
 
-      // Extract price
       let price = offer.price || product.price || metatags['og:price:amount'] || "Price varies";
       if (typeof price === 'string') {
         price = parseFloat(price.replace(/[^0-9.]/g, '')) || price;
       }
 
-      // Extract store name from URL
       const url = item.link;
       let store = "Store";
       if (url.includes('amazon')) store = "Amazon";
@@ -128,7 +109,7 @@ class ProductService {
           {
             store: store,
             price: typeof price === 'number' ? price : 0,
-            originalPrice: typeof price === 'number' ? price : price,
+            originalPrice: price,
             url: url,
             isLive: true
           }
@@ -137,6 +118,9 @@ class ProductService {
     });
   }
 
+  /**
+   * Mock result simulation with latency
+   */
   async getMockResults(query, category) {
     const latency = Math.floor(Math.random() * 800) + 200;
     await new Promise(resolve => setTimeout(resolve, latency));
@@ -147,15 +131,6 @@ class ProductService {
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(query.toLowerCase())
       );
-        // Simulate slight price fluctuations for "live" feel
-        prices: p.prices.map(pr => ({
-          ...pr,
-          price: Math.round(pr.price * (1 + (Math.random() * 0.02 - 0.01))) // +/- 1% variation
-        }))
-      }));
-    } catch (error) {
-      console.error("Failed to fetch live prices:", error);
-      throw new Error("Could not retrieve live price data. Please try again later.", { cause: error });
     }
 
     if (category !== 'All') {
